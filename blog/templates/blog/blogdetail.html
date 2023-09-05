@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block body %}
+
+<div class="post-img">
+    <img style="width: 100%; height: 50%; background-size: cover; background-position: center;"
+         src="{{ blog.image.url }}" alt="">
+</div> 
+
+<div class="m-auto blog-post-content max-width-2 m-auto my-2">
+    <h1 class="font1">{{ blog.title }}</h1>
+    <div class="blogpost-meta">
+        <div class="author-info">
+            <div>
+                <b>{{ blog.author }}</b>
+            </div>
+        </div>
+        <div class="social">
+            <!-- Your social icons here -->
+        </div>
+        <p>{{ blog.modified_date }}</p>
+    </div>
+    <p class="font1">{{ blog.body }}</p>
+
+    <!-- Rating Form -->
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Submit Rating</button>
+    </form>
+
+    <!-- Average Rating Display -->
+    {% if average_rating %}
+        <p>Rating: {{ average_rating }}</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}

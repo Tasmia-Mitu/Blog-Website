@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<h2>My Bookmarks</h2>
+<ul>
+  {% for bookmark in bookmarks %}
+    <li>
+      <a style="font-size: 30px; font-weight:600;" href="{% url 'blog_detail' bookmark.post.id %}">{{bookmark.post.id}}: {{ bookmark.post.title }}</a>
+      <form method="post" action="{% url 'bookmark_remove' bookmark.post.id %}">
+        {% csrf_token %}
+
+        <a href="{% url 'bookmarks_list' %}"><button class="btn btn-danger" type="submit">Remove from Bookmarks</button></a>
+      </form>
+    </li><br>
+  {% empty %}
+    <li>No bookmarks yet.</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

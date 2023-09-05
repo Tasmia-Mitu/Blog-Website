@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block body %}
+
+<div class="max-width-1 m-auto">
+    <hr>
+</div>
+<div class="m-auto content max-width-1 my-2">
+    <div class="content-left">
+        <h1>The heaven for bloggers</h1>
+        <p>iBlog is a website which lets you submit an article which upon approval will be up on our website and you
+            can get a good amount of reach from here!</p>
+        <p>My Halloween decorations are staying in the box this year. To be honest, they didn’t make it out of the
+            box last year either. My Halloween spirit has officially been bludgeoned to death by teenagers who no
+            longer care and a persistent October fear of the Northern California wildfires. And speaking of fear,
+            isn’t there more than enough of that going around? Maybe all of us can pretend that Halloween isn’t even
+            happening this year?</p>
+    </div>
+    <div class="content-right">
+        <img src="{% static 'img/home.svg' %}" alt="iBlog">
+    </div>
+</div>
+
+<div class="max-width-1 m-auto">
+    <hr>
+</div>
+<div class="home-articles max-width-1 m-auto font2">
+    <h2>Featured Articles</h2>
+    <div class="year-box adjust-year">
+        <div>
+            <h3>Year </h3>
+        </div>
+        <div>
+            <input type="radio" name="year" id=""> 2023
+        </div>
+        <div>
+            <input type="radio" name="year" id=""> 2022
+        </div>
+    </div>
+
+    {% for blog in blogs %}
+    <div class="home-article">
+        <div class="home-article-img">
+            <img src="{{blog.image.url}}" alt="article">
+        </div>
+        <div class="home-article-content font1">
+            {% if user.is_authenticated %}
+            <a href="{% url 'blog_detail' blog.id %}">
+                <h3>{{ blog.title }}</h3>
+            </a>
+            {% else %}
+            <a href="{% url 'login' %}">
+                <h3>{{ blog.title }}</h3>
+            </a>
+            {% endif %}
+
+            <div>Author : {{ blog.author.username }}</div>
+            <span>{{ blog.date|date:"d F Y" }} | 6 min read</span>
+
+            {% if average_rating %}
+            <p>Rating: {{ average_rating.rating}}</p>
+            {% endif %}
+            
+        </div>
+ 
+    </div>
+
+    {% endfor %}
+
+
+</div>
+
+{% endblock %}
