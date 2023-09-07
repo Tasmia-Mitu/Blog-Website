@@ -25,17 +25,6 @@ def register(request):
     return render(request, 'accounts/register.html', {'form' : form})
 
 
-# @login_required
-# def author_profile(request, username):
-    
-#     author = User.objects.get(username=request.user.username)
-#     blogs = Post.objects.filter(author=author)
-#     profile = Profile.objects.get(user=request.user)
-
-#     context = {'author': author, 'blogs': blogs, 'profile':profile}
-
-#     return render(request, 'accounts/profile.html', context )
-
 
 @login_required
 def author_profile(request, username):
@@ -44,7 +33,7 @@ def author_profile(request, username):
     
     try:
         profile = Profile.objects.get(user=author)
-        print(profile.bio)
+        #print(profile.bio)
     except Profile.DoesNotExist:
         profile = Profile.objects.create(user=author)
     
@@ -54,11 +43,8 @@ def author_profile(request, username):
 
 
 
-
-
 @login_required
 def profile_update(request):
-    # author = User.objects.get(username=request.user.username)
     profile = Profile.objects.get(user=request.user)
 
     if request.method == 'POST':
