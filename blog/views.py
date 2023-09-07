@@ -79,23 +79,43 @@ def blog_detail(request, pk):
 
 def blog_list(request):
     query = request.GET.get('q')
+    category_slug = request.GET.get('category')
+
+    
     blog_posts = Post.objects.all()
     form = SearchForm()
 
-    items_per_page = 5
+    categories = Category.objects.all()
+    
+    if category_slug:
+        try:
+            category = Category.objects.get(slug=category_slug)
+            blog_posts = blog_posts.filter(categories=category)
+        except Category.DoesNotExist:
+            pass
+
 
     if query:
         # Filter blog_posts based on the search query
         blog_posts = blog_posts.filter(
-            Q(title__icontains=query) |  # Search in the title
-            Q(body__icontains=query)    # Search in the body
+            Q(title__icontains=query) | 
+            Q(body__icontains=query) 
         )
 
-    paginator = Paginator(blog_posts, items_per_page)
+
+    blog_posts = blog_posts.order_by('-date')
+    blog_posts = blog_posts.annotate(average_rating=Avg('blograting__rating')).order_by('-average_rating')
+
+
+    paginator = Paginator(blog_posts, 5)
     page_number = request.GET.get('page')
     page = paginator.get_page(page_number)
 
-    return render(request, 'blog/blogpost.html', {'blog_posts': page, 'form': form})
+    return render(request, 'blog/blogpost.html', {
+        'blog_posts': page, 
+        'form': form,
+        'categories': categories
+    })
 
 
 
