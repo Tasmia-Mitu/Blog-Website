@@ -25,8 +25,13 @@ from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name = 'home'),
-    path('contact', views.contact, name = 'contact'),
 
     path('account/', include('accounts.urls')),
     path('blog/', include('blog.urls')),
-] + static(settings.MEDIA_URL , document_root = settings.MEDIA_ROOT)
+
+] 
+
+# Serve static and media files during development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
