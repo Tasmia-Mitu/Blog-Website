@@ -5,6 +5,7 @@ from .forms import BlogForm, BlogRatingForm, SearchForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Avg
+from django.db.models import Count
 from django.db.models import Q
 from django.core.paginator import Paginator, Page
 
@@ -56,6 +57,8 @@ def delete_blog(request, pk):
         return redirect('home')  # Redirect to the homepage or another appropriate page
     return render(request, 'blog/delete_blog.html', {'blog': blog})
 
+
+
 @login_required
 def blog_detail(request, pk):
     blog = get_object_or_404(Post, pk=pk)
@@ -65,34 +68,32 @@ def blog_detail(request, pk):
         form = BlogRatingForm(request.POST)
         if form.is_valid():
             rating_value = form.cleaned_data['rating']
-            
             BlogRating.objects.create(blog=blog, user=request.user, rating=rating_value)
             messages.success(request, 'Thank you for rating this blog!')
-    else:
-        form = BlogRatingForm()
+        else:
+            form = BlogRatingForm()
 
     average_rating = BlogRating.objects.filter(blog=blog).aggregate(Avg('rating'))['rating__avg']
+
+    # Round the average_rating to one decimal place
+    average_rating = round(average_rating, 1)
 
     return render(request, 'blog/blogdetail.html', {'blog': blog, 'blog_posts': related_posts, 'form': form, 'average_rating': average_rating})
 
 
-
 def blog_list(request):
     query = request.GET.get('q')
-    category_slug = request.GET.get('category')
-
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
     
     blog_posts = Post.objects.all()
     form = SearchForm()
 
     categories = Category.objects.all()
-    
-    if category_slug:
-        try:
-            category = Category.objects.get(slug=category_slug)
-            blog_posts = blog_posts.filter(categories=category)
-        except Category.DoesNotExist:
-            pass
+
+
+    if start_date and end_date:
+        blog_posts = blog_posts.filter(date__range=[start_date, end_date])
 
 
     if query:
@@ -113,8 +114,7 @@ def blog_list(request):
 
     return render(request, 'blog/blogpost.html', {
         'blog_posts': page, 
-        'form': form,
-        'categories': categories
+        'form': form
     })
 
 

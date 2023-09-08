@@ -1,6 +1,5 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.urls import reverse
 
 CATEGORY = [
     ('MachineLearning', 'Machine Learning'),
@@ -11,9 +10,10 @@ CATEGORY = [
 
 class Category(models.Model):
     name = models.CharField(max_length=100, choices=CATEGORY)
-
+    
     def __str__(self):
         return self.name
+    
 
 class Post(models.Model):
     title = models.CharField(max_length=200) 
