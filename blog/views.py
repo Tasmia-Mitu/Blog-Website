@@ -64,21 +64,31 @@ def blog_detail(request, pk):
     blog = get_object_or_404(Post, pk=pk)
     
     related_posts = Post.objects.filter(categories__in=blog.categories.all()).exclude(pk=pk)
+
+    form = BlogRatingForm(request.POST)
+
     if request.method == 'POST':
-        form = BlogRatingForm(request.POST)
+        
         if form.is_valid():
             rating_value = form.cleaned_data['rating']
-            BlogRating.objects.create(blog=blog, user=request.user, rating=rating_value)
+            blog_rating, created = BlogRating.objects.get_or_create(blog=blog, user=request.user, defaults={'rating': rating_value})
+
+            if not created:
+                blog_rating.rating = rating_value
+                blog_rating.save()
+
             messages.success(request, 'Thank you for rating this blog!')
         else:
-            form = BlogRatingForm()
+            messages.error(request, 'Failed to rate the blog. Please check your input.')
 
     average_rating = BlogRating.objects.filter(blog=blog).aggregate(Avg('rating'))['rating__avg']
 
     # Round the average_rating to one decimal place
-    average_rating = round(average_rating, 1)
+    if average_rating is not None:
+        average_rating = round(average_rating, 1)
 
     return render(request, 'blog/blogdetail.html', {'blog': blog, 'blog_posts': related_posts, 'form': form, 'average_rating': average_rating})
+
 
 
 def blog_list(request):

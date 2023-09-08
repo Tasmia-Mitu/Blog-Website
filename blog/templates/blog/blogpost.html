@@ -29,8 +29,8 @@
                 <div>{{ blog.author }}</div>
                 <span>{{ blog.date|date:"d F Y" }} | 6 min read</span><br><br>
 
-                <div>Average Rating: {{ blog.average_rating|default:"N/A"|floatformat:1 }}</div> 
-                
+                <div>Average Rating: {% if blog.average_rating %}{{ blog.average_rating|floatformat:1 }}{% else %}N/A{% endif %}</div>
+ 
 
                 <button id="bookmark-add-btn" data-post-id="{{ blog.id }}">
                     <a href="{% url 'bookmark_add' blog.id %}">Add to Bookmarks</a>
