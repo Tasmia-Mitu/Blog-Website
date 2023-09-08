@@ -2,6 +2,12 @@
 {% load static %}
 
 {% block body %}
+  {% if blog.author != request.user %}
+    <div style="width: 50%; margin: auto;" class="alert alert-primary" role="alert">
+      You can't edit this post, the author user can only edit this blog...!!
+    </div>
+  {% else %}
+
   <div class="container">
     <h1>Delete Blog Post</h1>
     <p>Are you sure you want to delete "{{ blog.title }}"?</p>
@@ -11,12 +17,14 @@
 
     <form method="POST">
         {% csrf_token %}
-        <input type="submit" value="Confirm Delete">
+        <input class="btn btn-danger" type="submit" value="Confirm Delete">
     </form><br>
 
-    <a href="{% url 'home' %}">Cancel</a>
+    <a class="btn btn-danger" href="{% url 'home' %}">Cancel</a>
 
   </div>
+
+  {% endif %}
   <br>
   <div><hr></div>
 

@@ -2,16 +2,26 @@
 {% load static %}
 
 {% block body %}
+  {% if blog.author != request.user %}
+  <div style="width: 50%; margin: auto;" class="alert alert-primary" role="alert">
+    You can't edit this post, the author user can only edit this blog...!!
+  </div>
+  {% else %}
+
   <div class="container">
     <h1>Edit Blog Post</h1>
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" >
       {% csrf_token %}
       {{ form.title.label_tag }} {{ form.title }}<br>
       {{ form.body.label_tag }} {{ form.body }}<br>
       {{ form.categories.label_tag }} {{ form.categories }}<br>  {# Render categories as a dropdown select box #}
       {{ form.image.label_tag }} {{ form.image }}<br>
-      <!-- {{ form.as_p }} -->
+      <br>
       <button class="btn btn-danger" type="submit">Save Changes</button><br><br>
     </form>
   </div>
+
+  {% endif %}
+
+  <div><hr></div>
 {% endblock %}

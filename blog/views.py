@@ -8,6 +8,7 @@ from django.db.models import Avg
 from django.db.models import Count
 from django.db.models import Q
 from django.core.paginator import Paginator, Page
+from django.http import Http404
 
 # Create a new blog post
 def create_blog(request):
@@ -32,6 +33,10 @@ def update_blog(request, pk):
         return redirect('login')
     
     blog = get_object_or_404(Post, pk=pk)
+
+    # if blog.author != request.user:
+    #     raise Http404("You don't have permission to edit this post.")
+    
     if request.method == 'POST':
         form = BlogForm(request.POST, request.FILES, instance=blog)
         if form.is_valid():
@@ -52,6 +57,11 @@ def delete_blog(request, pk):
         return redirect('login')
     
     blog = get_object_or_404(Post, pk=pk)
+
+    # if blog.author != request.user:
+    #     raise Http404("You don't have permission to edit this post.")
+
+    
     if request.method == 'POST':
         blog.delete()
         return redirect('home')  # Redirect to the homepage or another appropriate page
